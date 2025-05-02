@@ -30,6 +30,7 @@ async function getParty(id) {
     const response = await fetch(api + `/${id}`);
     const data = await response.json();
     selectedParty = data.data;
+    console.log(selectedParty);
   } catch (error) {
     console.log(`ERROR: ${error}`);
   }
@@ -66,9 +67,10 @@ function UpcomingParties() {
 
   const upcomingPartyItems = section.querySelectorAll(".upcoming-party");
   upcomingPartyItems.forEach((item) => {
-    item.addEventListener("click", () => {
+    item.addEventListener("click", async () => {
       const { id } = item.dataset;
-      getParty(id);
+      // need to await this before the render because getParty is asynchronous
+      await getParty(id);
       render();
     });
   });
@@ -84,6 +86,7 @@ function PartyDetails() {
 
   if (!selectedParty) {
     section.innerHTML = `
+      <h2>Party Details</h2>
       <p>Please select a party for more information.</p>
     `;
   } else {
@@ -92,6 +95,8 @@ function PartyDetails() {
     const date = dateData.toLocaleString();
 
     section.innerHTML = `
+      <h2>Party Details</h2>
+
       <h3>
         ${selectedParty.name} #${selectedParty.id}
       </h3>

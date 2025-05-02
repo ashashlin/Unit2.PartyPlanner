@@ -4,7 +4,48 @@
   box-sizing: border-box;
 }
 
+body {
+  padding: 1rem 4rem;
+}
+
 h1 {
   text-align: center;
   padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+main {
+  display: flex;
+  gap: 1.5rem;
+  max-width: 55rem;
+  margin: 0 auto;
+}
+
+.upcoming-parties,
+.party-details {
+  flex: 1;
+}
+
+.upcoming-parties h2,
+.party-details h2 {
+  margin-bottom: 1rem;
+}
+
+.upcoming-parties-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.upcoming-party {
+  padding: 0.5rem;
+  border: 1px solid skyblue;
+  cursor: pointer;
+  transition: 150ms;
+}
+
+.upcoming-party:hover {
+  font-weight: 700;
+  color: darkslateblue;
 }
