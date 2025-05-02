@@ -2,6 +2,8 @@
 
 let upcomingParties = [];
 let selectedParty;
+let guests = [];
+let rsvps = [];
 
 // === API Info ===
 
@@ -29,6 +31,30 @@ async function getParty(id) {
     const response = await fetch(api + `/${id}`);
     const data = await response.json();
     selectedParty = data.data;
+  } catch (error) {
+    console.log(`ERROR: ${error}`);
+  }
+}
+
+// === Fetch guests ===
+
+async function getGuests() {
+  try {
+    const response = await fetch(url + cohort + `/guests`);
+    const data = await response.json();
+    guests = data.data;
+  } catch (error) {
+    console.log(`ERROR: ${error}`);
+  }
+}
+
+// === Fetch rsvps ===
+
+async function getRsvps() {
+  try {
+    const response = await fetch(url + cohort + `/rsvps`);
+    const data = await response.json();
+    rsvps = data.data;
   } catch (error) {
     console.log(`ERROR: ${error}`);
   }
@@ -136,6 +162,8 @@ function render() {
 
 async function init() {
   await getParties();
+  await getGuests();
+  await getRsvps();
   render();
 }
 init();
