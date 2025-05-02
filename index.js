@@ -22,8 +22,34 @@ async function getParties() {
     console.log(`ERROR: ${error}`);
   }
 }
-getParties();
-render();
+
+// === Create HTML for a single upcoming party list item ===
+
+function UpcomingPartyListItem(party) {
+  return `<li>${party.name}</li>`;
+}
+
+// === Create HTML for the UpcomingParties section ===
+
+function UpcomingParties() {
+  const section = document.createElement("section");
+  section.classList.add("upcoming-parties");
+
+  let upcomingPartyListItems = "";
+  for (const party of upcomingParties) {
+    upcomingPartyListItems += UpcomingPartyListItem(party);
+  }
+
+  section.innerHTML = `
+    <h2>Upcoming Parties</h2>
+
+    <ul>
+      ${upcomingPartyListItems}
+    </ul>
+  `;
+
+  return section;
+}
 
 // === Render ===
 
@@ -36,5 +62,14 @@ function render() {
       <PartyDetails></PartyDetails>
     </main>
   `;
+
+  document.querySelector("UpcomingParties").replaceWith(UpcomingParties());
 }
-render();
+
+// === We have to first await the data to get sent back from the api, and then render the page, else the render function gets run first with the initial state of the variables ===
+
+async function init() {
+  await getParties();
+  render();
+}
+init();
