@@ -12,49 +12,13 @@ const cohort = "/2109-CPU-RM-WEB-PT";
 const resource = "/events";
 const api = url + cohort + resource;
 
-// === Fetch upcoming parties data from api ===
+// === Fetch data - write one function and use parameter to reduce repetition ===
 
-async function getParties() {
+async function getData(url) {
   try {
-    const response = await fetch(api);
+    const response = await fetch(url);
     const data = await response.json();
-    upcomingParties = data.data;
-  } catch (error) {
-    console.log(`ERROR: ${error}`);
-  }
-}
-
-// === Fetch data on one selected party ===
-
-async function getParty(id) {
-  try {
-    const response = await fetch(api + `/${id}`);
-    const data = await response.json();
-    selectedParty = data.data;
-  } catch (error) {
-    console.log(`ERROR: ${error}`);
-  }
-}
-
-// === Fetch guests ===
-
-async function getGuests() {
-  try {
-    const response = await fetch(url + cohort + `/guests`);
-    const data = await response.json();
-    guests = data.data;
-  } catch (error) {
-    console.log(`ERROR: ${error}`);
-  }
-}
-
-// === Fetch rsvps ===
-
-async function getRsvps() {
-  try {
-    const response = await fetch(url + cohort + `/rsvps`);
-    const data = await response.json();
-    rsvps = data.data;
+    return data.data;
   } catch (error) {
     console.log(`ERROR: ${error}`);
   }
@@ -101,7 +65,7 @@ function UpcomingParties() {
     item.addEventListener("click", async () => {
       const { id } = item.dataset;
       // need to await this before the render because getParty is asynchronous
-      await getParty(id);
+      selectedParty = await getData(api + `/${id}`);
       render();
     });
   });
@@ -161,9 +125,9 @@ function render() {
 // === We have to first await the data to get sent back from the api, and then render the page, else the render function gets run first with the initial state of the variables ===
 
 async function init() {
-  await getParties();
-  await getGuests();
-  await getRsvps();
+  upcomingParties = await getData(api);
+  guests = await getData(url + cohort + "/guests");
+  rsvps = await getData(url + cohort + "/rsvps");
   render();
 }
 init();
