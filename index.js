@@ -23,10 +23,26 @@ async function getParties() {
   }
 }
 
+// === Fetch data on one selected party ===
+
+async function getParty(id) {
+  try {
+    const response = await fetch(api + `/${id}`);
+    const data = await response.json();
+    selectedParty = data.data;
+  } catch (error) {
+    console.log(`ERROR: ${error}`);
+  }
+}
+
 // === Create HTML for a single upcoming party list item ===
 
 function UpcomingPartyListItem(party) {
-  return `<li>${party.name}</li>`;
+  return `
+    <li class="upcoming-party" data-id="${party.id}">
+      ${party.name}
+    </li>
+  `;
 }
 
 // === Create HTML for the UpcomingParties section ===
@@ -43,10 +59,48 @@ function UpcomingParties() {
   section.innerHTML = `
     <h2>Upcoming Parties</h2>
 
-    <ul>
+    <ul class="upcoming-parties-list">
       ${upcomingPartyListItems}
     </ul>
   `;
+
+  const upcomingPartyItems = section.querySelectorAll(".upcoming-party");
+  upcomingPartyItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      const { id } = item.dataset;
+      getParty(id);
+      render();
+    });
+  });
+
+  return section;
+}
+
+// === === Create HTML for the PartyDetails section ===
+
+function PartyDetails() {
+  const section = document.createElement("section");
+  section.classList.add("party-details");
+
+  if (!selectedParty) {
+    section.innerHTML = `
+      <p>Please select a party for more information.</p>
+    `;
+  } else {
+    // the date data is a little weird here as it includes party time to the minute... but for practice sake, I'll still render it
+    const dateData = new Date(selectedParty.date);
+    const date = dateData.toLocaleString();
+
+    section.innerHTML = `
+      <h3>
+        ${selectedParty.name} #${selectedParty.id}
+      </h3>
+
+      <p>${date}</p>
+      <p>${selectedParty.location}</p>
+      <p>${selectedParty.description}</p>
+    `;
+  }
 
   return section;
 }
@@ -57,6 +111,7 @@ function render() {
   const app = document.getElementById("app");
   app.innerHTML = `
     <h1>Party Planner</h1>
+
     <main>
       <UpcomingParties></UpcomingParties>
       <PartyDetails></PartyDetails>
@@ -64,6 +119,7 @@ function render() {
   `;
 
   document.querySelector("UpcomingParties").replaceWith(UpcomingParties());
+  document.querySelector("PartyDetails").replaceWith(PartyDetails());
 }
 
 // === We have to first await the data to get sent back from the api, and then render the page, else the render function gets run first with the initial state of the variables ===
