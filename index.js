@@ -17,7 +17,6 @@ async function getParties() {
     const response = await fetch(api);
     const data = await response.json();
     upcomingParties = data.data;
-    console.log(upcomingParties); // delete this later
   } catch (error) {
     console.log(`ERROR: ${error}`);
   }
@@ -30,7 +29,6 @@ async function getParty(id) {
     const response = await fetch(api + `/${id}`);
     const data = await response.json();
     selectedParty = data.data;
-    console.log(selectedParty);
   } catch (error) {
     console.log(`ERROR: ${error}`);
   }
@@ -39,8 +37,15 @@ async function getParty(id) {
 // === Create HTML for a single upcoming party list item ===
 
 function UpcomingPartyListItem(party) {
+  let isSelected = false;
+  if (selectedParty) {
+    selectedParty.id === party.id ? (isSelected = true) : (isSelected = false);
+  }
+
   return `
-    <li class="upcoming-party" data-id="${party.id}">
+    <li class="upcoming-party ${isSelected ? "active" : ""}" data-id="${
+    party.id
+  }">
       ${party.name}
     </li>
   `;
@@ -97,13 +102,13 @@ function PartyDetails() {
     section.innerHTML = `
       <h2>Party Details</h2>
 
-      <h3>
+      <h3 class="party-name-id">
         ${selectedParty.name} #${selectedParty.id}
       </h3>
 
-      <p>${date}</p>
-      <p>${selectedParty.location}</p>
-      <p>${selectedParty.description}</p>
+      <p class="party-date">${date}</p>
+      <p class="party-location">${selectedParty.location}</p>
+      <p class="party-description">${selectedParty.description}</p>
     `;
   }
 
